@@ -1,0 +1,472 @@
+<!-- provide styles, external resource links, scripts, etc -->
+
+<style>
+	div.level {
+		width: fill;
+		border: 1px solid lightgray;
+		margin:3px;
+		padding:3px;
+	}
+
+	div.level h4 {
+		background-color: lightgray;
+		font-size: .8em;
+		margin:0px;
+	}
+
+	span.native-input-type-string {
+		font-size: .8em;
+		color: gray;
+	}
+
+	div.native-wrapper-div {
+		display: block;
+	}
+
+	div.native-wrapper-div div.label-wrapper {
+		min-width: 100px;
+		display: inline-block;
+		height: fill;
+	}
+
+	div.native-wrapper-div div.input-wrapper {
+		min-width: 150px;
+		display: inline-block;
+		height: fill;
+	}
+
+	div.native-wrapper-div div.type-wrapper {
+		min-width:100px;
+		display: inline-block;
+		height: fill;
+	}
+
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<form method="POST" action="#">
+<div class="level">
+	
+	<h4>arg1</h4>
+	
+
+	<div class="choice" id="arg1">
+	<select class="choice-selector" id="arg1">
+		<option>Select Type</option>
+		
+		<option value="int">int</option>
+		
+		<option value="float">float</option>
+		
+		<option value="str">str</option>
+		
+		<option value="dict">dict</option>
+		
+	</select>
+
+	
+	<div class="choice-subchoice" id="arg1" subid="int" style="display:none;">
+		
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg1">arg1</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- integers -->
+			<input type="number" step="1" name="arg1" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				int, &gt;=0
+			</span>
+		</div>
+		<input type="hidden" name="arg1" value="int" />
+	</div>
+
+
+	</div>
+	
+	<div class="choice-subchoice" id="arg1" subid="float" style="display:none;">
+		
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg1">arg1</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- floats -->
+			<input type="number" step="any" name="arg1" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				float, &lt;=0
+			</span>
+		</div>
+		<input type="hidden" name="arg1" value="float" />
+	</div>
+
+
+	</div>
+	
+	<div class="choice-subchoice" id="arg1" subid="str" style="display:none;">
+		
+	<!-- selector type -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg1">arg1</label>
+		</div>
+		<div class="input-wrapper">
+			<select name="arg1">
+				
+				<option value="A">A</option>
+				
+				<option value="B">B</option>
+				
+				<option value="C">C</option>
+				
+			</select>
+		</div>
+		<input type="hidden" name="arg1" value="str" />
+	</div>
+
+
+	</div>
+	
+	<div class="choice-subchoice" id="arg1" subid="dict" style="display:none;">
+		<div class="level">
+	
+	<h4>arg1</h4>
+	
+
+	<div class="level">
+	
+	<h4>subkey1</h4>
+	
+
+	<div class="choice" id="arg1-subkey1">
+	<select class="choice-selector" id="arg1-subkey1">
+		<option>Select Type</option>
+		
+		<option value="int">int</option>
+		
+		<option value="float">float</option>
+		
+	</select>
+
+	
+	<div class="choice-subchoice" id="arg1-subkey1" subid="int" style="display:none;">
+		
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg1-subkey1">subkey1</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- integers -->
+			<input type="number" step="1" name="arg1-subkey1" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				int, &gt;0
+			</span>
+		</div>
+		<input type="hidden" name="arg1-subkey1" value="int" />
+	</div>
+
+
+	</div>
+	
+	<div class="choice-subchoice" id="arg1-subkey1" subid="float" style="display:none;">
+		
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg1-subkey1">subkey1</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- floats -->
+			<input type="number" step="any" name="arg1-subkey1" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				float, &lt;=0
+			</span>
+		</div>
+		<input type="hidden" name="arg1-subkey1" value="float" />
+	</div>
+
+
+	</div>
+	
+</div>
+</div>
+</div>
+	</div>
+	
+</div>
+</div><div class="level">
+	
+	<h4>arg2</h4>
+	
+
+	<div class="level">
+	
+	<h4>subkey1</h4>
+	
+
+	<div class="choice" id="arg2-subkey1">
+	<select class="choice-selector" id="arg2-subkey1">
+		<option>Select Type</option>
+		
+		<option value="int">int</option>
+		
+		<option value="float">float</option>
+		
+		<option value="dict">dict</option>
+		
+	</select>
+
+	
+	<div class="choice-subchoice" id="arg2-subkey1" subid="int" style="display:none;">
+		
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg2-subkey1">subkey1</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- integers -->
+			<input type="number" step="1" name="arg2-subkey1" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				int, None
+			</span>
+		</div>
+		<input type="hidden" name="arg2-subkey1" value="int" />
+	</div>
+
+
+	</div>
+	
+	<div class="choice-subchoice" id="arg2-subkey1" subid="float" style="display:none;">
+		
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg2-subkey1">subkey1</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- floats -->
+			<input type="number" step="any" name="arg2-subkey1" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				float, None
+			</span>
+		</div>
+		<input type="hidden" name="arg2-subkey1" value="float" />
+	</div>
+
+
+	</div>
+	
+	<div class="choice-subchoice" id="arg2-subkey1" subid="dict" style="display:none;">
+		<div class="level">
+	
+	<h4>subkey1</h4>
+	
+
+	
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg2-subkey1-subsub1">subsub1</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- integers -->
+			<input type="number" step="1" name="arg2-subkey1-subsub1" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				int, None
+			</span>
+		</div>
+		<input type="hidden" name="arg2-subkey1-subsub1" value="int" />
+	</div>
+
+
+</div>
+	</div>
+	
+</div>
+</div>
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="arg2-subkey2">subkey2</label>
+		</div>
+		<div class="input-wrapper">
+		
+			<!-- floats -->
+			<input type="number" step="any" name="arg2-subkey2" />
+
+		
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				float, None
+			</span>
+		</div>
+		<input type="hidden" name="arg2-subkey2" value="float" />
+	</div>
+
+
+</div><div class="level">
+	
+	<h4>kwarg1</h4>
+	
+
+	
+
+	<div class="unstructlist" id="kwarg1">
+		<div class="unstructlist-row" id="kwarg1">
+			<input type="text" class="unstruct-row-key" name="kwarg1[0]" id="0" />
+			<input type="text" step="any" class="unstruct-row-input" id="0" name="kwarg1[0]" />
+			<select name="kwarg1[0]" class="unstruct-row-type-select" id="0">
+				<option value="str" html-type="text,any">str</option>
+				<option value="int" html-type="number,1">int</option>
+				<option value="float" html-type="number,any">float</option>
+				<option value="bool" html-type="text,any,bool">bool</option>
+			</select>
+		</div>
+		<button class="add-index" id="kwarg1" type="button">Add Key-Value Pair</button>
+	</div>
+
+
+</div>
+
+<input type="submit" value="Execute" />
+</form>
+
+<!-- data list for boolean choices -->
+<datalist id="bool">
+	<option value="True" />
+	<option value="False" />
+</datalist>
+
+<script>
+$(document).ready( function () {
+	$('button.add-index').click( function () {
+		var rows = $('div.unstructlist-row', $(this).parent())
+		var clonerow = $('div.unstructlist-row:first', $(this).parent()).clone();
+		var index = rows.length
+
+		clonerow.insertBefore($(this));
+		var input = $('input.unstruct-row-input', clonerow),
+			select = $('select.unstruct-row-type-select', clonerow),
+			key = $('input.unstruct-row-key', clonerow);
+
+		var name = $(this).attr('id');
+
+		input.attr('name', name+'['+index+']');
+		input.attr('id', index);
+		input.removeAttr('value');
+		input.attr('type', 'text');
+
+		select.attr('name', name+'['+index+']');
+		select.attr('id', index);
+
+		if (key !== undefined) {
+			key.attr('name', name+'['+index+']');
+			key.attr('id', index);
+			key.removeAttr('value');
+		}
+
+	});
+});
+</script>
+
+<script>
+// handle unstructured list type change
+$('body').on('mousedown', 'select', function () {
+	$('select.unstruct-row-type-select').change( function () {
+		var index = $(this).attr('id'),
+			input = $('input.unstruct-row-input#'+index, $(this).parent());
+
+		var split = $('option:selected', $(this)).attr('html-type').split(",");
+		var type = split[0],
+			step = split[1];
+
+		if ($(this).val() == "bool") {
+			input.attr("list", split[2]);
+		}
+
+		input.attr("type", type);
+		input.attr("step", step);
+	});
+});
+</script>
+
+<script>
+// handle choice of one selector changes
+$(document).ready( function () {
+	// the div containing the choice-selector select element
+	var setOpen = function(selector) {
+		var top = $(selector).parent();
+		var argname = $(selector).attr('id');
+		var option = $(selector).val();
+
+		var all = $("div.choice-subchoice#"+argname);
+		all.hide();
+		$('input', $(all)).attr('disabled', true);
+		$("select:not([class='choice-selector'])", $(all)).attr('disabled', true);
+
+		var choice = $("div.choice-subchoice#"+argname+"[subid='"+option+"']");
+		choice.show();
+		$("input", $(choice)).attr('disabled', false);
+		$("select", $(choice)).attr('disabled', false);
+
+		// find sub choice of one selectors and recurse
+		$('select.choice-selector', $(choice)).each( function () {
+			setOpen($(this));
+		});
+	}
+
+	$('select.choice-selector').change( function () {
+		setOpen($(this));
+	});
+});
+</script>

@@ -1,0 +1,84 @@
+{% if inputtype == "native" %}
+	<!-- native types -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="{{name}}">{{ displayname }}</label>
+		</div>
+		<div class="input-wrapper">
+		{% if type == "int" or type == "long" %}
+			<!-- integers -->
+			<input type="number" step="1" name="{{ name }}" />
+
+		{% elif type == "float" or type == "double" %}
+			<!-- floats -->
+			<input type="number" step="any" name="{{ name }}" />
+
+		{% elif type == "str" %}
+			<!-- strings -->
+			<input type="text" name="{{ name }}" />
+
+		{% elif type == "bool" %}
+			<!-- bool selector -->
+			<input type="text" name="{{ name }}" list="bool" />
+
+		{% endif %}
+		</div>
+		<div class="type-wrapper">
+			<span class="native-input-type-string">
+				{{ type }}, {{ constraint }}
+			</span>
+		</div>
+		<input type="hidden" name="{{ name }}" value="{{ type }}" />
+	</div>
+
+{% elif inputtype ==  "selector" %}
+	<!-- selector type -->
+
+	<div class="native-wrapper-div">
+		<div class="label-wrapper">
+			<label name="{{name}}">{{ displayname }}</label>
+		</div>
+		<div class="input-wrapper">
+			<select name="{{ name }}">
+				{% for option in options %}
+				<option value="{{ option }}">{{ option }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<input type="hidden" name="{{ name }}" value="{{ type }}" />
+	</div>
+
+{% elif inputtype == "unstructlist" %}
+	<!-- unstructlist type -->
+
+	<div class="unstructlist" id="{{ name }}">
+		<div class="unstructlist-row" id="0">
+			<input type="text" step="any" class="unstruct-row-input" id="0" name="{{ name }}[0]" />
+			<select name="{{ name }}[0]" class="unstruct-row-type-select" id="0">
+				<option value="str" html-type="text,any">str</option>
+				<option value="int" html-type="number,1">int</option>
+				<option value="float" html-type="number,any">float</option>
+				<option value="bool" html-type="text,any,bool">bool</option>
+			</select>
+		</div>
+		<button class="add-index" id="{{ name }}" type="button">Add Index</button>
+	</div>
+
+{% elif inputtype == "unstructdict" %}
+
+	<div class="unstructlist" id="{{ name }}">
+		<div class="unstructlist-row" id="{{ name }}">
+			<input type="text" class="unstruct-row-key" name="{{ name }}[0]" id="0" />
+			<input type="text" step="any" class="unstruct-row-input" id="0" name="{{ name }}[0]" />
+			<select name="{{ name }}[0]" class="unstruct-row-type-select" id="0">
+				<option value="str" html-type="text,any">str</option>
+				<option value="int" html-type="number,1">int</option>
+				<option value="float" html-type="number,any">float</option>
+				<option value="bool" html-type="text,any,bool">bool</option>
+			</select>
+		</div>
+		<button class="add-index" id="{{ name }}" type="button">Add Key-Value Pair</button>
+	</div>
+
+{% endif %}

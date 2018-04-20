@@ -1,0 +1,14 @@
+<div class="choice" id="{{ name }}">
+	<select class="choice-selector" id="{{ name }}">
+		<option>Select Type</option>
+		{% for option in options %}
+		<option value="{{ option }}">{{ option }}</option>
+		{% endfor %}
+	</select>
+
+	{% for option, entry in zip(options, entries) %}
+	<div class="choice-subchoice" id="{{ name }}" subid="{{ option }}" style="display:none;">
+		{{ entry|safe }}
+	</div>
+	{% endfor %}
+</div>
