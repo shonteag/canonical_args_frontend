@@ -15,7 +15,13 @@ env = Environment(
 )
 env.globals.update(zip=zip)
 
-def generate_html(spec, delimeter="-"):
+custom_env = None
+
+def generate_html(spec,
+				  delimeter="-",
+				  action="",
+				  method="POST",
+				  include_styling=True):
 	"""
 	Recurse through ``spec`` dict, generating HTML components for
 	argspec entries.
@@ -163,5 +169,11 @@ def generate_html(spec, delimeter="-"):
 								inner=subhtml)
 
 	# top template
-	template = env.get_template("top.html")
-	return template.render(inner=html)
+	template = env.get_template("form.html")
+	html = template.render(inner=html, action=action, method=method)
+
+	if include_styling:
+		template = env.get_template("styling.html")
+		html = template.render(inner=html)
+
+	return html

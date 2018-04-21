@@ -21,7 +21,6 @@ def cast(valstring, typestring, name=None):
     Perform a cast on ``valstring`` to type ``typestring``.
     First, have to ``eval`` the ``typestring``, provided it
     is a permitted type (security reasons).
-
     :param str valstring: the stringified value
     :param str typestring: the stringified type (eg. ``"int"``)
     :param str name: optional, if specified, any errors raised
@@ -43,19 +42,18 @@ def cast(valstring, typestring, name=None):
         raise ValueError(err)
 
 def reform_from_html(spec, form, delimeter="-"):
-    """
-    Recurse through a flattened ``form`` dictionary, reconstructing
-    dictionary to match structure specified by ``spec``.
-
-    :param dict spec: the canonical_args argspec dict
-    :param dict form: the flat HTML form data
-    :param str delimeter: default ``"-"``, the string character used
-        to separate levels in the ``form.keys()`` entries.
-    :returns: ``dict``, the reconstructed, type correct argument
-        dictionary, matching the ``spec`` structure.
-    """
 
     def recurse(level, name, types, values, delimeter="-"):
+        """
+        Recurse through a flattened ``form`` dictionary, reconstructing
+        dictionary to match structure specified by ``spec``.
+        :param dict spec: the canonical_args argspec dict
+        :param dict form: the flat HTML form data
+        :param str delimeter: default ``"-"``, the string character used
+            to separate levels in the ``form.keys()`` entries.
+        :returns: ``dict``, the reconstructed, type correct argument
+            dictionary, matching the ``spec`` structure.
+        """
         subtype = check.eval_subtype(types)
 
         # choice of one
@@ -63,18 +61,25 @@ def reform_from_html(spec, form, delimeter="-"):
             names = None
 
             for index, subsubtype in enumerate(subtype):
-                if check.type_to_string(subsubtype) not in values:
-                    continue
-                else:
+                try:
                     names = recurse(level+1,
                                     name,
-                                    subtype[index],
+                                    subsubtype,
                                     values[check.type_to_string(subsubtype)])
+                except KeyError:
+                    # this subkey doesn't exist, so it must
+                    # be of a different type
+                    pass
+                    # Yes, you read that correctly, we pass here.
+                    # But it's ok! If we can't find a valid type
+                    # in the loop, we raise a KeyError below.
+                else:
                     break
 
             if names is None:
                 # we couldnt find a valid entry
-                raise KeyError("could not find valid entry for {}".format(
+                # See? Told you we re-raise the key error.
+                raise KeyError("could not find valid entry for '{}'".format(
                     name))
 
             return names
@@ -112,8 +117,9 @@ def reform_from_html(spec, form, delimeter="-"):
             for subkey in sorted(matchingkeys):
                 index = int(re.findall('\[(.*)\]', subkey)[0])
                 raw = form[subkey]
-                construct.append(cast(raw[0], raw[1], name))
+                construct.append(cast(raw[0], raw[1], name=name))
             return construct
+            # construct list of values ordered by index in key
 
         # unstructdict
         elif subtype == dict and values is None:
@@ -124,13 +130,13 @@ def reform_from_html(spec, form, delimeter="-"):
             construct = {}
             for subkey in matchingkeys:
                 raw = form[subkey]
-                construct[str(raw[0])] = cast(raw[1], raw[2], name)
+                construct[str(raw[0])] = cast(raw[1], raw[2], name=name)
             return construct
 
         # native
         else:
             raw = form[name]
-            return cast(raw[0], raw[1], name)
+            return cast(raw[0], raw[1], name=name)
 
     names = {
         "args": [],

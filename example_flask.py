@@ -68,15 +68,18 @@ def index():
 	elif request.method == "POST":
 		flatdict = dict(request.form)
 
+		print flatdict
+
 		try:
 			reconstdict = format.reform_from_html(argspec, flatdict)
 			structure.checkspec(argspec,
 								reconstdict["args"],
 								reconstdict["kwargs"])
 		except Exception as e:
+			raise
 			return str(e)
 
-		return json.dumps(flatdict, sort_keys=True)
+		return json.dumps(reconstdict, sort_keys=True)
 
 
 if __name__ == "__main__":
