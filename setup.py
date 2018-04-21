@@ -19,7 +19,7 @@ setup(name="canonical_args_frontend",
           "Intended Audience :: Developers"
       ],
       install_requires=[
-          "canonical_args==0.4",
-          "Jinja2==2.1"
+          "canonical_args>=0.4",
+          "Jinja2>=2.1"
       ]
 )
