@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from canonical_args import check
 import re
-from pprint import pprint
+import warnings
 
 
 permitted_types = ["int",
@@ -15,6 +15,9 @@ permitted_types = ["int",
                    "long",
                    "str",
                    "bool"]
+
+class NotSpecified(object):
+    pass
 
 def cast(valstring, typestring, name=None):
     """
@@ -30,16 +33,25 @@ def cast(valstring, typestring, name=None):
     :raises TypeError: if ``typestring`` is not a permitted type.
     :returns: the ``valstring`` cast to the type of ``typestring``.
     """
-    if typestring not in permitted_types:
-        raise TypeError('{} is not a permitted type'.format(typestring))
+    valstring = str(valstring)
+    typestring = str(typestring)
 
-    try:
-        return eval(typestring)(valstring)
-    except ValueError, e:
-        err = "`{}` is invalid for type '{}'".format(valstring, typestring)
-        if name:
-            err += " for arg '{}'".format(name)
-        raise ValueError(err)
+    if typestring == "NoneType":
+        return None
+    elif valstring == "":
+        # argument was left blank
+        return NotSpecified
+    else:
+        if typestring not in permitted_types:
+            raise TypeError('{} is not a permitted type'.format(typestring))
+
+        try:
+            return eval(typestring)(valstring)
+        except ValueError, e:
+            err = "`{}` is invalid for type '{}'".format(valstring, typestring)
+            if name:
+                err += " for arg '{}'".format(name)
+            raise ValueError(err)
 
 def reform_from_html(spec, form, delimeter="-"):
 
@@ -58,53 +70,66 @@ def reform_from_html(spec, form, delimeter="-"):
 
         # choice of one
         if isinstance(subtype, check.ChoiceOfOne):
-            names = None
+            entry = NotSpecified
 
             for index, subsubtype in enumerate(subtype):
                 try:
-                    names = recurse(level+1,
+                    entry = recurse(level+1,
                                     name,
                                     subsubtype,
                                     values[check.type_to_string(subsubtype)])
-                except KeyError:
-                    # this subkey doesn't exist, so it must
-                    # be of a different type
+                except KeyError as e:
                     pass
-                    # Yes, you read that correctly, we pass here.
-                    # But it's ok! If we can't find a valid type
-                    # in the loop, we raise a KeyError below.
                 else:
                     break
 
-            if names is None:
+            if entry is NotSpecified:
                 # we couldnt find a valid entry
                 # See? Told you we re-raise the key error.
-                raise KeyError("could not find valid entry for '{}'".format(
-                    name))
+                warnings.warn(
+                    "could not find valid entry for '{}'".format(name),
+                    RuntimeWarning)
 
-            return names
+            return entry
 
         # structlist
         elif isinstance(subtype, list) and isinstance(values, list):
-            names = []
+            entry = []
             for index, subsubtype in enumerate(subtype):
-                names.append(recurse(level+1,
-                                     name+"[{}]".format(index),
-                                     subtype[index],
-                                     values[index]))
-            return names
+                ret = recurse(level+1,
+                              name+"[{}]".format(index),
+                              subtype[index],
+                              values[index])
+
+                if ret is not NotSpecified:
+                    # do not append an unspecified value
+                    entry.append(ret)
+                else:
+                    # because this is a structured list, the positional
+                    # argument is guaranteed. an unspecified value must
+                    # therefore be None.
+                    entry.append(None)
+            return entry
 
         # structdict
         elif subtype == dict and isinstance(values, dict):
-            names = {}
+            entry = {}
             for kw in sorted(values):
                 arg = values[kw]
-                names[kw] = recurse(level+1,
-                                    name+delimeter+kw,
-                                    arg["type"],
-                                    arg["values"],
-                                    delimeter=delimeter)
-            return names
+                ret = recurse(level+1,
+                              name+delimeter+kw,
+                              arg["type"],
+                              arg["values"],
+                              delimeter=delimeter)
+                if ret is not NotSpecified:
+                    # do not set an unspecified value
+                    entry[kw] = ret
+                else:
+                    # this is a Structured Dict, so we have to guarantee
+                    # the presence of all keys. Thusly, set None when a
+                    # value is unspecified.
+                    entry[kw] = None
+            return entry
 
         # unstructlist
         elif subtype == list and values is None:
@@ -117,9 +142,16 @@ def reform_from_html(spec, form, delimeter="-"):
             for subkey in sorted(matchingkeys):
                 index = int(re.findall('\[(.*)\]', subkey)[0])
                 raw = form[subkey]
-                construct.append(cast(raw[0], raw[1], name=name))
-            return construct
-            # construct list of values ordered by index in key
+                ret = cast(raw[0], raw[1], name=name)
+                if ret is not NotSpecified:
+                    # ensure not to appaned a NotSpecified value
+                    construct.append(ret)
+                # this is an unstructured list, so if a value is
+                # unspecified, ignore the shit out of it.
+            if len(construct) > 0:
+                return construct
+            else:
+                return NotSpecified
 
         # unstructdict
         elif subtype == dict and values is None:
@@ -130,30 +162,49 @@ def reform_from_html(spec, form, delimeter="-"):
             construct = {}
             for subkey in matchingkeys:
                 raw = form[subkey]
-                construct[str(raw[0])] = cast(raw[1], raw[2], name=name)
-            return construct
+                if str(raw[0]) != '':
+                    # ensure there is a valid key
+                    ret = cast(raw[1], raw[2], name=name)
+                    if ret != NotSpecified:
+                        # ensure there is a valid value
+                        construct[str(raw[0])] = ret
+                    # this is an unstructured dict, so keys are not
+                    # guaranteed here. If a value is unspecified,
+                    # simply don't append it (aka, ignore it).
+            if len(construct) > 0:
+                return construct
+            else:
+                return NotSpecified
 
         # native
         else:
             raw = form[name]
-            return cast(raw[0], raw[1], name=name)
+            ret = cast(raw[0], raw[1], name=name)
+            return ret
 
     names = {
         "args": [],
         "kwargs": {}
     }
     for index, arg in enumerate(spec["args"]):
-        names["args"].append(recurse(0,
-                                     arg["name"],
-                                     arg["type"],
-                                     arg["values"],
-                                     delimeter=delimeter))
+        ret = recurse(0,
+                      arg["name"],
+                      arg["type"],
+                      arg["values"],
+                      delimeter=delimeter)
+        if ret != NotSpecified:
+            names["args"].append(ret)
+        else:
+            names["args"].append(None)
 
     for kw, arg in spec["kwargs"].items():
-        names["kwargs"][kw] = recurse(0,
-                                      kw,
-                                      arg["type"],
-                                      arg["values"],
-                                      delimeter=delimeter)
+        ret = recurse(0,
+                      kw,
+                      arg["type"],
+                      arg["values"],
+                      delimeter=delimeter)
+        print "  ", kw, ret
+        if ret != NotSpecified:
+            names["kwargs"][kw] = ret
 
     return names

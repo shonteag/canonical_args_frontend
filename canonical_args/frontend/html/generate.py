@@ -29,14 +29,18 @@ def generate_html(spec,
 	:param dict spec: the canonical_args argspec dict
 	:param str delimeter: default ``"-"``, the string character used
 		to separate levels in the HTML input ``"name"`` attributes.
+	:param str action: default ``""``, the html ``<form>`` "action"
+		attribute
+	:param str method: default ``"POST"`` the html ``<form>`` "method"
+		attribute
+	:param bool include_styling: default True, include html ``<style>``
+		tags.
 	:returns: str, the fully rendered HTML to display on the front end.
 	"""
 
 	def recurse(level, name, types, values, delimeter=delimeter):
 		subtype = check.eval_subtype(types)
-
-		print level, name, subtype
-
+		
 		# choice of one
 		if isinstance(subtype, check.ChoiceOfOne):
 			entries = []
@@ -137,6 +141,7 @@ def generate_html(spec,
 
 		# native
 		else:
+			print "!!!!", name, subtype
 			# name, type, inputtype
 			template = env.get_template("base.html")
 			return template.render(name=name,

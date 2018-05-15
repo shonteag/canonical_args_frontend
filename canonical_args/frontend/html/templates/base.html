@@ -22,6 +22,9 @@
 			<!-- bool selector -->
 			<input type="text" name="{{ name }}" list="bool" />
 
+		{% elif type == "NoneType" %}
+			<input type="hidden" name="{{ name }}" value="None" />
+
 		{% endif %}
 		</div>
 		<div class="type-wrapper">
@@ -60,6 +63,7 @@
 				<option value="int" html-type="number,1">int</option>
 				<option value="float" html-type="number,any">float</option>
 				<option value="bool" html-type="text,any,bool">bool</option>
+				<option value="NoneType" html-type="hidden,any">None</option>
 			</select>
 		</div>
 		<button class="add-index" id="{{ name }}" type="button">Add Index</button>
@@ -76,6 +80,7 @@
 				<option value="int" html-type="number,1">int</option>
 				<option value="float" html-type="number,any">float</option>
 				<option value="bool" html-type="text,any,bool">bool</option>
+				<option value="NoneType" html-type="hidden,any">None</option>
 			</select>
 		</div>
 		<button class="add-index" id="{{ name }}" type="button">Add Key-Value Pair</button>
