@@ -45,7 +45,11 @@
 		<div class="input-wrapper">
 			<select name="{{ name }}">
 				{% for option in options %}
-				<option value="{{ option }}">{{ option }}</option>
+					{% if option_ids is defined %}
+						<option value="{{ option_ids[loop.index-1] }}">{{ option }}</option>
+					{% else %}
+						<option value="{{ option }}">{{ option }}</option>
+					{% endif %}
 				{% endfor %}
 			</select>
 		</div>

@@ -5,6 +5,8 @@ into usable, nested dict of method arguments.
 from __future__ import absolute_import
 
 from canonical_args import check
+from .. import sources
+
 import re
 import warnings
 
@@ -38,6 +40,11 @@ def cast(valstring, typestring, name=None):
 
     if typestring == "NoneType":
         return None
+    if typestring == "bool":
+        if valstring == "True":
+            return True
+        else:
+            return False
     elif valstring == "":
         # argument was left blank
         return NotSpecified
@@ -176,6 +183,13 @@ def reform_from_html(spec, form, delimeter="-"):
             else:
                 return NotSpecified
 
+        # cls
+        elif check.type_to_string(subtype) in sources.SOURCES:
+            identifier = form[name][0]
+            import_string = form[name][1]
+            obj = sources.get_one(import_string, identifier, raw=True)
+            return obj
+
         # native
         else:
             raw = form[name]
@@ -203,7 +217,6 @@ def reform_from_html(spec, form, delimeter="-"):
                       arg["type"],
                       arg["values"],
                       delimeter=delimeter)
-        print "  ", kw, ret
         if ret != NotSpecified:
             names["kwargs"][kw] = ret
 

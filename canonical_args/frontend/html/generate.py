@@ -7,6 +7,8 @@ from __future__ import absolute_import
 from jinja2 import Environment, PackageLoader, select_autoescape
 from canonical_args import check
 
+from .. import sources
+
 
 
 env = Environment(
@@ -15,6 +17,7 @@ env = Environment(
 )
 env.globals.update(zip=zip)
 
+# TODO!
 custom_env = None
 
 def generate_html(spec,
@@ -40,7 +43,7 @@ def generate_html(spec,
 
 	def recurse(level, name, types, values, delimeter=delimeter):
 		subtype = check.eval_subtype(types)
-		
+
 		# choice of one
 		if isinstance(subtype, check.ChoiceOfOne):
 			entries = []
@@ -139,9 +142,20 @@ def generate_html(spec,
 								   options=values,
 								   inputtype="selector")
 
+		# cls
+		elif check.type_to_string(subtype) in sources.SOURCES:
+			ids, values = sources.get_all(subtype)
+
+			template = env.get_template("base.html")
+			return template.render(name=name,
+								   displayname=name.split(delimeter)[-1],
+								   type=check.type_to_string(subtype),
+								   option_ids=ids,
+								   options=values,
+								   inputtype="selector")
+
 		# native
 		else:
-			print "!!!!", name, subtype
 			# name, type, inputtype
 			template = env.get_template("base.html")
 			return template.render(name=name,
